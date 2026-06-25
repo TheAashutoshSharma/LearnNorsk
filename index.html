@@ -281,13 +281,14 @@
 
     // FIXED: Google Translate API audio router bypasses broken system TTS
     // FIXED HIGH-RELIABILITY AUDIO PIPELINE
+    // RE-ENGINEERED: 100% Local Native TTS Pipeline (No external URLs or downloads)
     window.speakCurrentWord = function(event) {
         event.stopPropagation();
         if (sessionList.length === 0) return;
         
         let textToSpeak = "";
         
-        // If card is flipped, read the target complex sentence response, otherwise read the headline task
+        // 1. Determine target text context
         if (flipped && sessionList[idx].s_no) {
             textToSpeak = sessionList[idx].s_no;
         } else {
@@ -295,22 +296,44 @@
             textToSpeak = textToSpeak.replace(/^å\s+/, '');
         }
         
-        const encText = encodeURIComponent(textToSpeak);
+        // 2. Clear any speech queues currently stuck or running
+        if (window.speechSynthesis) {
+            window.speechSynthesis.cancel();
+        } else {
+            alert("Feil: Your browser does not support Speech Synthesis.");
+            return;
+        }
         
-        // Use a high-reliability, CORS-friendly open mirror for native Norwegian audio synthesis
-        const proxySpeechUrl = `https://api.dictionaryapi.dev/api/v2/entries/no/${encText}`; 
-        const fallbackGoogleUrl = `https://translate.google.com.vn/translate_tts?ie=UTF-8&tl=no&client=tw-ob&q=${encText}`;
-        const dictEngineUrl = `https://texttospeech.responsivevoice.org/v1/text:synthesize?text=${encText}&lang=no&engine=g3&name=&key=kv3YUXZ9`;
-
-        // Direct stream utilizing the highly accessible responsive engine
-        const audio = new Audio(dictEngineUrl);
-        audio.play().catch(err => {
-            console.log("Primary audio failed, attempting backup engine channel...");
-            // Backup attempt using secondary routing endpoint if device blocks the engine stream
-            const backupAudio = new Audio(fallbackGoogleUrl);
-            backupAudio.play().catch(e => console.error("All audio streams blocked by browser security layout: ", e));
-        });
+        // 3. Create the native speech instance
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        
+        // 4. Force Norwegian locale configurations
+        utterance.lang = 'no-NO';
+        utterance.rate = 0.82;  // Comfortably paced for high comprehension drilling
+        utterance.pitch = 1.0;
+        
+        // 5. Query and lock onto an authentic native voice file if installed on your system
+        const voices = window.speechSynthesis.getVoices();
+        // Look explicitly for Norwegian Bokmål ('no' or 'nb')
+        const noVoice = voices.find(v => v.lang.startsWith('no') || v.lang.startsWith('nb'));
+        
+        if (noVoice) {
+            utterance.voice = noVoice;
+        }
+        
+        // Debug logger hook to monitor failure status in your app's lower pane
+        utterance.onerror = function(e) {
+            document.getElementById('dbMsg').innerText = "Audio Error code: " + e.error;
+        };
+        
+        // 6. Fire the audio transmission locally
+        window.speechSynthesis.speak(utterance);
     };
+
+    // Essential Chrome/Safari browser patch: Ensure system voice profiles preload instantly on startup
+    if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+    }
 
     window.handleCard = async function(known) {
         if (sessionList.length === 0) return;
