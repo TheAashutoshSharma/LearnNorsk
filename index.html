@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bokmål CEFR PWA</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#002f6c">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <style>
+        :root { --bg: #f4f6f9; --card: #ffffff; --primary: #002f6c; --accent: #ba0c2f; --success: #2e7d32; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .wrapper { width: 100%; max-width: 480px; }
+        h1 { font-size: 1.4rem; color: var(--primary); text-align: center; margin: 5px 0; }
+        .menu-box { background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        select, input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 0.9rem; }
+        .file-label { display: block; font-size: 0.8rem; font-weight: bold; color: #555; margin-top: 5px; }
+        .stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 5px; font-weight: 500; }
+        .bar { background: #e0e0e0; border-radius: 10px; height: 10px; width: 100%; margin-bottom: 20px; overflow: hidden; }
+        .fill { background: var(--success); height: 100%; width: 0%; transition: width 0.3s; }
+        .card { background: var(--card); border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); padding: 30px 20px; min-height: 240px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: pointer; position: relative; margin-bottom: 20px; text-align: center; box-sizing: border-box;}
+        .nor { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin: 10px 0 2px 0; word-break: break-word; }
+        .pron { font-size: 1rem; color: #777; font-style: italic; margin-bottom: 15px; }
+        .audio-btn { background: #e0e6ed; border: none; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; cursor: pointer; }
+        .divider { width: 100%; border-top: 1px dashed #ddd; margin: 10px 0; display: none; }
+        .translation-block { display: none; width: 100%; }
+        .eng { font-size: 1.3rem; color: #333; font-weight: bold; margin-bottom: 15px; }
+        .sentence-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: left; border-left: 4px solid var(--primary); margin-top: 5px; }
+        .s-nor { font-size: 1rem; font-weight: 600; color: #222; margin-bottom: 4px; }
+        .s-eng { font-size: 0.9rem; color: #666; }
+        .hint { font-size: 0.75rem; color: #bbb; font-weight: bold; letter-spacing: 0.5px; margin-top: 10px; }
+        .actions { display: flex; gap: 12px; }
+        button.action-btn { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+        button.action-btn:active { transform: scale(0.97); }
+        .btn-fail { background: #ffebee; color: var(--accent); border: 2px solid var(--accent); }
+        .btn-pass { background: #e8f5e9; color: var(--success); border: 2px solid var(--success); }
+        .debug-msg { font-size: 0.75rem; color: #999; text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>🇳🇴 Bokmål CEFR PWA</h1>
+    
+    <div class="menu-box">
+        <label class="file-label">👤 USER ID (For Syncing Progress):</label>
+        <input type="text" id="userIdInput" value="learner_1" onchange="switchUser()">
+        
+        <label class="file-label" style="margin-top:10px;">🎯 SELECT TARGET CEFR LEVEL:</label>
+        <select id="levelPicker" onchange="switchLevel()">
+            <option value="A1">A1: Beginner</option>
+            <option value="A2">A2: Elementary</option>
+            <option value="B1">B1: Intermediate</option>
+            <option value="B2">B2: Upper Intermediate</option>
+        </select>
+    </div>
+
+    <div class="stats">
+        <span id="statProgress">Mastered: 0/0</span>
+        <span id="statPercent">0%</span>
+    </div>
+    <div class="bar"><div class="fill" id="barFill"></div></div>
+
+    <div class="card" onclick="flip(event)">
+        <div style="width:100%;">
+            <div class="nor" id="boxNor">Laster...</div>
+            <div class="pron" id="boxPron">-</div>
+            <button class="audio-btn" onclick="speakCurrentWord(event)">🔊 Listen</button>
+        </div>
+        <div class="divider" id="boxDivider"></div>
+        <div class="translation-block" id="boxTranslation">
+            <div class="eng" id="boxEng">-</div>
+            <div class="sentence-box">
+                <div class="s-nor" id="boxSNor">-</div>
+                <div class="s-eng" id="boxSEng">-</div>
+            </div>
+        </div>
+        <div class="hint" id="boxHint">TAP CARD TO REVEAL</div>
+    </div>
+
+    <div class="actions">
+        <button class="action-btn btn-fail" onclick="handleCard(false)">❌ Hard</button>
+        <button class="action-btn btn-pass" onclick="handleCard(true)">✅ Know it</button>
+    </div>
+    
+    <div class="debug-msg" id="dbMsg">Initializing backend sync...</div>
+</div>
+
+<!-- Firebase Modules -->
+<script type="module">
+    import { initializeApp } from "https://gstatic.com";
+    import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion } from "https://gstatic.com";
+
+    // ⚠️ REPLACE THIS CONFIG WITH YOUR FIREBASE PROJECT SETTINGS
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT_://firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT_://appspot.com",
+        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Initial word dataset rows
+    let masterData = {
+        "A1": [{ no: "å være", pron: "[å vaere]", en: "to be", s_no: "Jeg vil være her.", s_en: "I want to be here." }],
+        "A2": [{ no: "en leilighet", pron: "[ehn lye-lee-heht]", en: "an apartment", s_no: "Fin leilighet.", s_en: "Nice apartment." }],
+        "B1": [{ no: "en undersøkelse", pron: "[ehn oon-dehr-sooh-kehls-eh]", en: "a survey", s_no: "Undersøkelsen er ferdig.", s_en: "The survey is done." }],
+        "B2": [{ no: "bærekraftig", pron: "[baere-krahf-tee]", en: "sustainable", s_no: "Dette er bærekraftig.", s_en: "This is sustainable." }]
+    };
+
+    let activeLevel = "A1";
+    let sessionList = [];
+    let masteredList = [];
+    let idx = 0;
+    let flipped = false;
+    let userId = "learner_1";
+
+    async function syncProgressWithFirebase() {
+        document.getElementById('dbMsg').innerText = "Syncing with Cloud Firestore...";
+        const userRef = doc(db, "users", userId);
+        
+        try {
+            const userSnap = await getDoc(userRef);
+            if (userSnap.exists()) {
+                const data = userSnap.data();
+                masteredList = data[activeLevel] || [];
+            } else {
+                await setDoc(userRef, { A1: [], A2: [], B1: [], B2: [] });
+                masteredList = [];
+            }
+            document.getElementById('dbMsg').innerText = "Cloud Sync Active.";
+            setupSession();
+        } catch (e) {
+            console.error("Offline or config missing. Using local fallback storage.", e);
+            document.getElementById('dbMsg').innerText = "Offline Mode (Local Storage fallback).";
+            masteredList = JSON.parse(localStorage.getItem(`local_mastered_${activeLevel}`)) || [];
+            setupSession();
+        }
+    }
+
+    function setupSession() {
+        const fullLevelList = masterData[activeLevel] || [];
+        sessionList = fullLevelList.filter(item => !masteredList.includes(item.no));
+        sessionList.sort(() => Math.random() - 0.5);
+        idx = 0;
+        render();
+    }
+
+    function render() {
+        const fullCount = (masterData[activeLevel] || []).length;
+        const remaining = sessionList.length;
+        const doneCount = fullCount - remaining;
+        const pct = fullCount > 0 ? Math.round((doneCount / fullCount) * 100) : 0;
+
+        document.getElementById("statProgress").innerText = `Mastered: ${doneCount}/${fullCount}`;
+        document.getElementById("statPercent").innerText = `${pct}%`;
+        document.getElementById("barFill").style.width = `${pct}%`;
+
+        if (sessionList.length === 0) {
+            document.getElementById("boxNor").innerText = "Ferdig! 🎉";
+            document.getElementById("boxPron").innerText = "-";
+            document.getElementById("boxEng").innerText = `Level ${activeLevel} cleared!`;
+            document.getElementById("boxDivider").style.display = "block";
+            document.getElementById("boxTranslation").style.display = "block";
+            document.getElementById("boxHint").style.display = "none";
+            return;
+        }
+
+        flipped = false;
+        document.getElementById("boxNor").innerText = sessionList[idx].no;
+        document.getElementById("boxPron").innerText = sessionList[idx].pron || "";
+        document.getElementById("boxEng").innerText = sessionList[idx].en;
+        document.getElementById("boxSNor").innerText = sessionList[idx].s_no || "";
+        document.getElementById("boxSEng").innerText = sessionList[idx].s_en || "";
+        
+        document.getElementById("boxDivider").style.display = "none";
+        document.getElementById("boxTranslation").style.display = "none";
+        document.getElementById("boxHint").innerText = "TAP CARD TO REVEAL";
+		document.getElementById("boxHint").style.display = "block";
+	}
+	
+	window.flip = function(event) {
+		if (event.target.classList.contains('audio-btn')) 
+			return;
+		if (sessionList.length === 0) 
+			return;
+		flipped = !flipped;
+		const displayState = flipped ? "block" : "none";document.getElementById("boxDivider").style.display = displayState;document.getElementById("boxTranslation").style.display = displayState;};window.speakCurrentWord = function(event) {event.stopPropagation();if (sessionList.length === 0) return;const cleanText = sessionList[idx].no.replace(/^å\s+/, '');const utterance = new SpeechSynthesisUtterance(cleanText);utterance.lang = 'no-NO';window.speechSynthesis.speak(utterance);};window.handleCard = async function(known) {if (sessionList.length === 0) return;if (known) {const wordWord = sessionList[idx].no;masteredList.push(wordWord);localStorage.setItem(local_mastered_${activeLevel}, JSON.stringify(masteredList));try {const userRef = doc(db, "users", userId);await updateDoc(userRef, { [activeLevel]: arrayUnion(wordWord) });} catch(e) {console.log("Buffered local save.");}sessionList.splice(idx, 1);} else {idx++;}if (idx >= sessionList.length) idx = 0;render();};window.switchLevel = function() {activeLevel = document.getElementById("levelPicker").value;syncProgressWithFirebase();};window.switchUser = function() {userId = document.getElementById("userIdInput").value;syncProgressWithFirebase();};syncProgressWithFirebase();if ('serviceWorker' in navigator) {navigator.serviceWorker.register('sw.js').then(() => console.log("Service Worker registered successfully."));}
