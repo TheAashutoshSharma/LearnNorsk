@@ -1,21 +1,16 @@
-### 2. `manifest.json` (The Web Manifest File)
-*This configuration enables standard app behavior, giving the PWA its app name and background colors.*
-
-```json
 {
-  "name": "Bokmal CEFR Scale Builder",
-  "short_name": "BokmalPWA",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#f4f6f9",
-  "theme-color": "#002f6c",
-  "orientation": "portrait-primary",
+  "short_name": "LearnNorsk",
+  "name": "3-Month Norsk Muntlig Masterclass",
   "icons": [
     {
-      "src": "https://flaticon.com",
-      "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "src": "index.html",
+      "type": "text/html",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "index.html",
+  "background_color": "#002f6c",
+  "theme_color": "#002f6c",
+  "display": "standalone",
+  "orientation": "portrait"
 }
