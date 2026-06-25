@@ -8,7 +8,7 @@
     <meta name="theme-color" content="#002f6c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        :root { --bg: #f7fafc; --card: #ffffff; --primary: #1a365d; --accent: #c53030; --success: #2f855a; --secondary: #4a5568; --highlight: #feebc8;}
+        :root { --bg: #f7fafc; --card: #ffffff; --primary: #1a365d; --accent: #c53030; --success: #2f855a; --secondary: #4a5568; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .wrapper { width: 100%; max-width: 550px; }
         h1 { font-size: 1.3rem; color: var(--primary); text-align: center; margin: 5px 0; font-weight: 800; letter-spacing: -0.5px; }
@@ -28,15 +28,14 @@
         
         .card { background: var(--card); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 25px 20px; min-height: 320px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid #e2e8f0; margin-bottom: 20px; text-align: center; box-sizing: border-box; transition: transform 0.2s; }
         .card:hover { transform: translateY(-2px); }
-        .nor { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 15px 0 5px 0; word-break: break-word; line-height: 1.3; }
-        .pron { font-size: 0.9rem; color: #718096; font-style: italic; margin-bottom: 15px; background: #f7fafc; padding: 2px 8px; border-radius: 4px; }
+        .nor { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin: 15px 0 5px 0; word-break: break-word; line-height: 1.4; }
         .context-tag { background: #ebf8ff; color: #2b6cb0; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-        .audio-btn { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
-        .audio-btn:hover { background: #cbd5e0; }
+        .audio-btn { background: #ba0c2f; border: none; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: white; margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .audio-btn:hover { background: #900822; }
         
         .divider { width: 100%; border-top: 2px dashed #e2e8f0; margin: 15px 0; display: none; }
         .translation-block { display: none; width: 100%; }
-        .eng { font-size: 1.15rem; color: #2d3748; font-weight: 700; margin-bottom: 15px; }
+        .eng { font-size: 1.1rem; color: #2d3748; font-weight: 700; margin-bottom: 15px; }
         
         .sentence-box { background: #f7fafc; padding: 14px; border-radius: 10px; text-align: left; border-left: 4px solid var(--primary); margin-top: 5px; }
         .s-title { font-size: 0.75rem; font-weight: 700; color: #a0aec0; text-transform: uppercase; margin-bottom: 5px; }
@@ -51,19 +50,15 @@
         button.action-btn { flex: 1; padding: 18px; border: none; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.1s ease; }
         button.action-btn:active { transform: scale(0.98); }
         .btn-fail { background: #fff5f5; color: var(--accent); border: 2px solid #feb2b2; }
-        .btn-fail:hover { background: #fed7d7; }
         .btn-pass { background: #f0fff4; color: var(--success); border: 2px solid #9ae6b4; }
-        .btn-pass:hover { background: #c6f6d5; }
         .debug-msg { font-size: 0.75rem; color: #a0aec0; text-align: center; margin-top: 20px; font-weight: 500; }
-        
-        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
 <div class="wrapper">
     <h1>🇳🇴 3-Month Muntlig Blueprint</h1>
-    <h2>Your Daily Teacher-Guided Drill Rig</h2>
+    <h2>Google Translate Audio Integration Enabled</h2>
     
     <div class="tabs">
         <button id="tabGloser" class="tab-btn active" onclick="switchMode('gloser')">⚡ Core Vocabulary & Usage</button>
@@ -93,8 +88,7 @@
         <div style="width:100%;">
             <span class="context-tag" id="boxTag">Loading...</span>
             <div class="nor" id="boxNor">Laster...</div>
-            <div class="pron" id="boxPron">-</div>
-            <button class="audio-btn" onclick="speakCurrentWord(event)">🔊 Play Speech</button>
+            <button class="audio-btn" onclick="speakCurrentWord(event)">🔊 Google TTS Pronounce</button>
         </div>
         <div class="divider" id="boxDivider"></div>
         <div class="translation-block" id="boxTranslation">
@@ -136,49 +130,58 @@
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
         }
-    } catch(e) { console.error("Firebase unavailable, running on isolated local storage.", e); }
+    } catch(e) { console.error("Firebase unavailable, running on local cache.", e); }
 
-    // MASSIVE SYSTEMATIC RE-DESIGN BY YOUR NORWEGIAN TEACHER
+    // MULTIPLE EXPANDED EXERCISES PER LEVEL
     const masterData = {
         "gloser": {
             "A1": [
-                { no: "å like (liker - likte - har likt)", pron: "[lik-ehr]", en: "to like (Core Anchor Verb)", s_no: "Jeg liker å bo i Norge fordi det er trygt.", s_en: "I like living in Norway because it is safe.", tag: "Month 1 Verb" },
-                { no: "å pleie (pleier - pleide - har pleid)", pron: "[plei-ehr]", en: "to usually do / be accustomed to", s_no: "Jeg pleier å drikke kaffe om morgenen.", s_en: "I usually drink coffee in the morning.", tag: "Month 1 Verb" },
-                { no: "fordi", pron: "[fohr-dee]", en: "because (Essential Clause Connector)", s_no: "Jeg lærer norsk fordi jeg vil jobbe her.", s_en: "I am learning Norwegian because I want to work here.", tag: "Month 1 Connector" },
-                { no: "en jobb (jobben - jobber - jobbene)", pron: "[yobb]", en: "a job / employment", s_no: "Jeg søker etter en jobb innen IT.", s_en: "I am searching for a job within IT.", tag: "Month 1 Noun" },
-                { no: "å hilse (hilser - hilste - har hilst)", pron: "[hil-sehr]", en: "to greet", s_no: "Det er vanlig å hilse med et håndtrykk.", s_en: "It is customary to greet with a handshake.", tag: "Month 1 Social" }
+                { no: "å like (liker - likte - har likt)", en: "to like (Core Anchor Verb)", s_no: "Jeg liker å bo i Norge fordi det er trygt.", s_en: "I like living in Norway because it is safe.", tag: "A1 Verbs" },
+                { no: "å pleie (pleier - pleide - har pleid)", en: "to usually do / be accustomed to", s_no: "Jeg pleier å drikke kaffe om morgenen.", s_en: "I usually drink coffee in the morning.", tag: "A1 Verbs" },
+                { no: "fordi", en: "because (Essential Clause Connector)", s_no: "Jeg lærer norsk fordi jeg vil jobbe her.", s_en: "I am learning Norwegian because I want to work here.", tag: "A1 Connectors" },
+                { no: "en jobb (jobben - jobber)", en: "a job / employment", s_no: "Jeg søker etter en jobb innen IT.", s_en: "I am searching for a job within IT.", tag: "A1 Nouns" },
+                { no: "å hilse (hilser - hilste)", en: "to greet", s_no: "Det er vanlig å hilse med et håndtrykk.", s_en: "It is customary to greet with a handshake.", tag: "A1 Social" }
             ],
             "A2": [
-                { no: "å trives (trives - trivdes - har trivdes)", pron: "[tree-vehs]", en: "to enjoy oneself / thrive in a place", s_no: "Jeg trives veldig godt i mitt nye nabolag.", s_en: "I thrive very well in my new neighborhood.", tag: "Month 1 Setup" },
-                { no: "en leilighet (leiligheten - leiligheter)", pron: "[lye-lee-heht]", en: "an apartment", s_no: "Jeg leier en leilighet med to soverom.", s_en: "I rent an apartment with two bedrooms.", tag: "Month 1 Living" },
-                { no: "selv om", pron: "[sell ohm]", en: "even though / although", s_no: "Jeg går på tur selv om det regner.", s_en: "I go for a walk even though it is raining.", tag: "Month 1 Connector" },
-                { no: "en utfordring (utfordringen - utfordringer)", pron: "[oot-fohr-dreeng]", en: "a challenge", s_no: "Å lære uttale er en stor utfordring.", s_en: "Learning pronunciation is a big challenge.", tag: "Month 1 Abstract" }
+                { no: "å trives (trives - trivdes)", en: "to enjoy oneself / thrive in a place", s_no: "Jeg trives veldig godt i mitt nye nabolag.", s_en: "I thrive very well in my new neighborhood.", tag: "A2 Expression" },
+                { no: "en leilighet (leiligheten)", en: "an apartment", s_no: "Jeg leier en leilighet med god planløsning.", s_en: "I rent an apartment with a good layout.", tag: "A2 Living" },
+                { no: "selv om", en: "even though / although", s_no: "Jeg går på tur selv om det regner.", s_en: "I go for a walk even though it is raining.", tag: "A2 Connectors" },
+                { no: "en utfordring (utfordringen)", en: "a challenge", s_no: "Å lære uttale er en stor utfordring.", s_en: "Learning pronunciation is a big challenge.", tag: "A2 Abstract" },
+                { no: "en mulighet (muligheten)", en: "an opportunity / possibility", s_no: "Norge gir mange muligheter for friluftsliv.", s_en: "Norway gives many opportunities for outdoor life.", tag: "A2 Abstract" }
             ],
             "B1": [
-                { no: "etter min mening", pron: "[eht-tehr meen meh-neeng]", en: "in my opinion (Argumentative Anchor)", s_no: "Etter min mening bør kollektivtransport være gratis.", s_en: "In my opinion, public transport should be free.", tag: "Month 2 Opinion" },
-                { no: "å forårsake (-et, -et)", pron: "[fohr-ahr-sah-keh]", en: "to cause / bring about", s_no: "Høyt skjermbruk kan forårsake dårlig søvn.", s_en: "High screen use can cause poor sleep.", tag: "Month 2 Discussion" },
-                { no: "en fordel (fordelen - fordeler)", pron: "[fohr-dehll]", en: "an advantage / benefit", s_no: "En stor fordel med Norge er balansen mellom jobb og fritid.", s_en: "A major advantage with Norway is the work-life balance.", tag: "Month 2 Analysis" },
-                { no: "en ulempe (ulempen - ulemper)", pron: "[oo-lehm-peh]", en: "a disadvantage / drawback", s_no: "En ulempe med saken er de høye kostnadene.", s_en: "A disadvantage of the matter is the high costs.", tag: "Month 2 Analysis" }
+                { no: "etter min mening", en: "in my opinion (Argumentative Anchor)", s_no: "Etter min mening bør kollektivtransport være gratis.", s_en: "In my opinion, public transport should be free.", tag: "B1 Opinion" },
+                { no: "å forårsake (-et)", en: "to cause / bring about", s_no: "Høyt skjermbruk kan forårsake dårlig søvn.", s_en: "High screen use can cause poor sleep.", tag: "B1 Discussion" },
+                { no: "en fordel (fordelen)", en: "an advantage / benefit", s_no: "En stor fordel er balansen mellom jobb og fritid.", s_en: "A major advantage is the work-life balance.", tag: "B1 Analysis" },
+                { no: "en ulempe (ulempen)", en: "a disadvantage / drawback", s_no: "En ulempe med saken er de høye kostnadene.", s_en: "A disadvantage of the matter is the high costs.", tag: "B1 Analysis" },
+                { no: "å være enig (i / med)", en: "to agree (with an idea / person)", s_no: "Jeg er enig i at vi må beskytte miljøet.", s_en: "I agree that we must protect the environment.", tag: "B1 Argument" }
             ],
             "B2": [
-                { no: "å forutsette (forutsetter - forutsatte - har forutsatt)", pron: "[fohr-oot-seht-teh]", en: "to presuppose / require / assume", s_no: "Det grønne skiftet forutsetter store investeringer.", s_en: "The green shift requires massive investments.", tag: "Month 3 Debate" },
-                { no: "bærekraftig (bærekraftig - bærekraftige)", pron: "[baere-krahf-tee]", en: "sustainable", s_no: "Vi må utvikle mer bærekraftige energikilder.", s_en: "We must develop more sustainable energy sources.", tag: "Month 3 Macro" },
-                { no: "i hvilken grad", pron: "[ee veel-kehn grahd]", en: "to what extent / how far", s_no: "Spørsmålet er i hvilken grad staten bør gripe inn.", s_en: "The question is to what extent the state should intervene.", tag: "Month 3 Structuring" },
-                { no: "å drøfte (drøfter - drøftet - har drøftet)", pron: "[druhf-tehr]", en: "to discuss thoroughly / analyze options", s_no: "I denne oppgaven skal jeg drøfte fordeler og ulemper.", s_en: "In this task, I shall thoroughly debate the pros and cons.", tag: "Month 3 Anchor" }
+                { no: "å forutsette (forutsetter)", en: "to require / assume", s_no: "Det grønne skiftet forutsetter store investeringer.", s_en: "The green shift requires massive investments.", tag: "B2 Academic" },
+                { no: "bærekraftig", en: "sustainable", s_no: "Vi må utvikle mer bærekraftige energikilder.", s_en: "We must develop more sustainable energy sources.", tag: "B2 Macro" },
+                { no: "i hvilken grad", en: "to what extent", s_no: "Spørsmålet er i hvilken grad staten bør gripe inn.", s_en: "The question is to what extent the state should intervene.", tag: "B2 Structuring" },
+                { no: "å drøfte (drøfter)", en: "to analyze thoroughly / debate options", s_no: "I denne oppgaven skal jeg drøfte fordeler og ulemper.", s_en: "In this task, I shall thoroughly debate the pros and cons.", tag: "B2 Anchor" },
+                { no: "å ta hensyn til", en: "to take into consideration / account", s_no: "Vi må ta hensyn til fremtidige generasjoner.", s_en: "We must take future generations into consideration.", tag: "B2 Academic" }
             ]
         },
         "muntlig": {
             "A1": [
-                { no: "Kan du fortelle litt om deg selv?", pron: "Intro Sequence", en: "Can you tell me a bit about yourself?", s_no: "Jeg heter Ashutosh. Jeg kommer fra India, men nå bor jeg i Oslo. Jeg jobber med IT og har bodd her i noen år.", s_en: "I am Ashutosh. I come from India, but now I live in Oslo. I work with IT and have lived here for some years.", tag: "Muntlig Part 1", tip: "Teacher Tip: Memorize this exact sequence. Keep verbs strictly in the second position (V2 rule)." }
+                { no: "Hva heter du og hvor kommer du fra?", en: "Personal Introduction - Exercise 1", s_no: "Jeg heter Ashutosh. Jeg kommer fra India, men nå bor jeg i Norge. Jeg trives kjempegodt her.", s_en: "My name is Ashutosh. I come from India, but now I live in Norway. I enjoy myself immensely here.", tag: "A1 Dialogue 1", tip: "Keep your structure clean. Word order is Subject + Verb + Rest." },
+                { no: "Hva liker du å gjøre på fritiden?", en: "Hobbies & Daily Life - Exercise 2", s_no: "På fritiden liker jeg å gå på tur, lage mat, og spille cricket med venner på helger.", s_en: "In my free time, I like to go for walks, cook food, and play cricket with friends on weekends.", tag: "A1 Dialogue 2", tip: "Notice the inversion: When time 'På fritiden' starts the sentence, the verb 'liker' comes immediately second!" },
+                { no: "Hvorfor vil du lære norsk?", en: "Motivation Pitch - Exercise 3", s_no: "Jeg vil lære norsk fordi jeg bor her og ønsker å snakke med kollegaer og naboer på jobb.", s_en: "I want to learn Norwegian because I live here and want to talk with colleagues and neighbors at work.", tag: "A1 Dialogue 3", tip: "Using 'fordi' combines two clauses. Keep normal word order after 'fordi'." }
             ],
             "A2": [
-                { no: "Fortell om hvordan du bor og nabolaget ditt.", pron: "Description Task", en: "Describe your living situation and neighborhood.", s_no: "Jeg bor i en leilighet i andre etasje. Nabolaget mitt er veldig rolig og barnevennlig, og det er kort vei til butikken.", s_en: "I live in an apartment on the second floor. My neighborhood is very quiet and child-friendly, and it's a short distance to the shop.", tag: "Muntlig Part 2", tip: "Teacher Tip: Use spatial prepositions accurately ('i andre etasje', 'kort vei til'). This guarantees an A2 rating." }
+                { no: "Kan du beskrive boligen din?", en: "Housing & Layout Description - Exercise 1", s_no: "Jeg bor i en lys leilighet med god planløsning. Det er store vinduer og kjøkkenet er veldig moderne.", s_en: "I live in a bright apartment with a good layout. There are large windows and the kitchen is very modern.", tag: "A2 Narrative 1", tip: "Use descriptive adjectives properly. 'En lys leilighet' matches the masculine/feminine gender rules." },
+                { no: "Fortell om et sted du har besøkt nylig.", en: "Travel & Past Tense - Exercise 2", s_no: "I ferien reiste jeg til Split i Kroatia. Det var en fantastisk tur der jeg besøkte historiske festninger.", s_en: "During the holidays I traveled to Split in Croatia. It was a fantastic trip where I visited historical fortresses.", tag: "A2 Narrative 2", tip: "To pass A2, you MUST correctly deploy the past tense (preteritum): 'reiste', 'var', 'besøkte'." },
+                { no: "Hvordan ser en vanlig arbeidsdag ut for deg?", en: "Workplace Routine - Exercise 3", s_no: "Jeg våkner tidlig og tar kaffe med melk. Så jobber jeg med IT-utvikling foran datamaskinen hele dagen.", s_en: "I wake up early and have coffee with milk. Then I work with IT development in front of the computer all day.", tag: "A2 Narrative 3", tip: "Practice sequential markers like 'Først' (first), 'Så' (then), 'Etterpå' (afterwards)." }
             ],
             "B1": [
-                { no: "Bør barn få bruke smarttelefoner fritt?", pron: "Argumentation Drill", en: "Should children be allowed to use smartphones freely?", s_no: "Det er et viktig spørsmål. På den ene siden gir telefoner tilgang til kunnskap. På den andre siden kan det føre til mindre fysisk aktivitet. Derfor mener jeg at voksne må sette klare grenser.", s_en: "That is an important question. On one hand, phones give access to knowledge. On the other hand, it can lead to less physical activity. Therefore, I believe adults must set clear limits.", tag: "Muntlig Individual", tip: "Teacher Tip: The exact words 'På den ene siden... På den andre siden...' (On one hand... On the other hand) instantly unlock your B1 passing grade because it shows conceptual organization." }
+                { no: "Bør foreldre kontrollere barnas skjermtid?", en: "Topic Discussion: Digital Life - Exercise 1", s_no: "Det er et komplisert spørsmål. På den ene siden må barn beskyttes mot avhengighet. På den andre siden er teknologi en viktig del av skolen. Derfor mener jeg balanse er nøkkelen.", s_en: "That is a complicated question. On one hand, children must be protected from addiction. On the other hand, technology is an important part of school. Therefore, I believe balance is the key.", tag: "B1 Monologue 1", tip: "The examiner looks for 'På den ene siden... På den andre siden...' to give you a B1 checkmark." },
+                { no: "Hva tenker du om gratis kollektivtransport?", en: "Topic Discussion: Public Infrastructure - Exercise 2", s_no: "Etter min mening vil gratis kollektivtransport redusere biltrafikken betraktelig. Likevel må vi huske at det vil kreve høyere skatter fra innbyggerne.", s_en: "In my opinion, free public transport will reduce car traffic considerably. Nevertheless, we must remember that it will require higher taxes from citizens.", tag: "B1 Monologue 2", tip: "Use transition hooks like 'Likevel' (Nevertheless/Yet) to connect contrasting viewpoints seamlessly." }
             ],
             "B2": [
-                { no: "Hvordan kan vi løse konflikten mellom økonomisk vekst og miljøvern?", pron: "Macro Dilemma Debate", en: "How can we solve the conflict between economic growth and environmental protection?", s_no: "Dette reiser en fundamental problemstilling. Det er en utbredt oppfatning at økonomisk vekst går på bekostning av klimaet. Likevel vil jeg påstå at grønn teknologi gjør det mulig å kombinere disse to hensynene, forutsatt at myndighetene legger til rette for subsidier.", s_en: "This raises a fundamental dilemma. It is a widespread perception that economic growth comes at the expense of the climate. Nevertheless, I argue that green technology makes it possible to combine these two considerations, provided that authorities facilitate subsidies.", tag: "Muntlig Discussion", tip: "Teacher Tip: To clear B2, do not take raw simple stances. Use modal combinations and conditioning phrases like 'forutsatt at' (provided that) and 'går på bekostning av' (comes at the expense of)." }
+                { no: "Hvordan kan vi balansere økonomisk vekst og klimamål?", en: "Macro Structural Debate - Exercise 1", s_no: "Dette reiser en fundamental problemstilling. Det er en utbredt oppfatning at økonomisk vekst går på bekostning av miljøet. Likevel vil jeg påstå at investeringer i grønn teknologi gjør det mulig å forene disse hensynene.", s_en: "This raises a fundamental dilemma. It is a widespread perception that economic growth comes at the expense of the environment. Nevertheless, I argue that investments in green technology make it possible to reconcile these considerations.", tag: "B2 Drøfting 1", tip: "B2 requires academic idioms. Use expressions like 'går på bekostning av' (comes at the expense of) and 'å forene hensyn' (to reconcile considerations)." },
+                { no: "Er hjemmekontor en trussel mot det sosiale arbeidsmiljøet?", en: "Macro Structural Debate - Exercise 2", s_no: "I hvilken grad hjemmekontor påvirker oss er sterkt omdiskutert. Det fremheves ofte at fleksibilitet øker produktiviteten, men man risikerer samtidig en grad av isolasjon som svekker bedriftskulturen over tid.", s_en: "To what extent working from home affects us is highly debated. It is often emphasized that flexibility increases productivity, but one simultaneously risks a degree of isolation that weakens corporate culture over time.", tag: "B2 Drøfting 2", tip: "Deploy passive sentence constructions ('det fremheves ofte' - it is often highlighted) to build an objective, advanced academic tone." }
             ]
         }
     };
@@ -192,7 +195,7 @@
     let userId = "learner_1";
 
     async function syncProgressWithFirebase() {
-        document.getElementById('dbMsg').innerText = "Syncing tracking modules...";
+        document.getElementById('dbMsg').innerText = "Syncing system data...";
         const storageKey = `mastered_${currentMode}_${activeLevel}`;
         
         if (db) {
@@ -206,13 +209,13 @@
                     await setDoc(userRef, { [storageKey]: [] }, { merge: true });
                     masteredList = [];
                 }
-                document.getElementById('dbMsg').innerText = "Cloud Sync Pipeline Activated.";
+                document.getElementById('dbMsg').innerText = "Cloud tracking live.";
                 setupSession();
                 return;
-            } catch (e) { console.log("Firebase fallback triggered."); }
+            } catch (e) { console.log("Fallback triggered."); }
         }
         
-        document.getElementById('dbMsg').innerText = "Offline Mode active (Local Storage tracking).";
+        document.getElementById('dbMsg').innerText = "Offline Cache Active.";
         masteredList = JSON.parse(localStorage.getItem(`local_${storageKey}`)) || [];
         setupSession();
     }
@@ -236,9 +239,8 @@
         document.getElementById("barFill").style.width = `${pct}%`;
 
         if (sessionList.length === 0) {
-            document.getElementById("boxNor").innerText = "Phase Complete! 🏆";
-            document.getElementById("boxPron").innerText = "-";
-            document.getElementById("boxEng").innerText = `You have structural ownership of ${activeLevel} under this module. Move to the next phase!`;
+            document.getElementById("boxNor").innerText = "Syllabus Segment Mastered! 🏆";
+            document.getElementById("boxEng").innerText = `Great job. Advance to the next level selection.`;
             document.getElementById("boxTag").innerText = "Completed";
             document.getElementById("boxDivider").style.display = "block";
             document.getElementById("boxTranslation").style.display = "block";
@@ -250,7 +252,6 @@
         flipped = false;
         const item = sessionList[idx];
         document.getElementById("boxNor").innerText = item.no;
-        document.getElementById("boxPron").innerText = item.pron || "";
         document.getElementById("boxEng").innerText = item.en;
         document.getElementById("boxSNor").innerText = item.s_no || "";
         document.getElementById("boxSEng").innerText = item.s_en || "";
@@ -278,18 +279,26 @@
         document.getElementById("boxTranslation").style.display = displayState;
     };
 
+    // FIXED: Google Translate API audio router bypasses broken system TTS
     window.speakCurrentWord = function(event) {
         event.stopPropagation();
         if (sessionList.length === 0) return;
         
-        // Strip down complex formatting so browser reads cleanly
-        let cleanText = sessionList[idx].no.split('(')[0].trim();
-        cleanText = cleanText.replace(/^å\s+/, '');
+        let textToSpeak = "";
         
-        const utterance = new SpeechSynthesisUtterance(cleanText);
-        utterance.lang = 'no-NO';
-        utterance.rate = 0.85; // Slightly slower for crisp articulation listening
-        window.speechSynthesis.speak(utterance);
+        // If card is flipped, read the target complex sentence response, otherwise read the headline task
+        if (flipped && sessionList[idx].s_no) {
+            textToSpeak = sessionList[idx].s_no;
+        } else {
+            textToSpeak = sessionList[idx].no.split('(')[0].trim();
+            textToSpeak = textToSpeak.replace(/^å\s+/, '');
+        }
+        
+        const encText = encodeURIComponent(textToSpeak);
+        const googleSpeechUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=no&client=tw-ob&q=${encText}`;
+        
+        const audio = new Audio(googleSpeechUrl);
+        audio.play().catch(err => console.error("Audio block fallback: ", err));
     };
 
     window.handleCard = async function(known) {
