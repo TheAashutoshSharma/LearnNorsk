@@ -3,49 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bokmål CEFR PWA - Lær Norsk</title>
+    <title>3-Month Muntlig Masterclass - LearnNorsk</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#002f6c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <style>
-        :root { --bg: #f4f6f9; --card: #ffffff; --primary: #002f6c; --accent: #ba0c2f; --success: #2e7d32; --secondary: #4a5568; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-        .wrapper { width: 100%; max-width: 500px; }
-        h1 { font-size: 1.4rem; color: var(--primary); text-align: center; margin: 5px 0; }
+        :root { --bg: #f7fafc; --card: #ffffff; --primary: #1a365d; --accent: #c53030; --success: #2f855a; --secondary: #4a5568; --highlight: #feebc8;}
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .wrapper { width: 100%; max-width: 550px; }
+        h1 { font-size: 1.3rem; color: var(--primary); text-align: center; margin: 5px 0; font-weight: 800; letter-spacing: -0.5px; }
+        h2 { font-size: 0.9rem; text-align: center; color: var(--secondary); margin: 0 0 15px 0; font-weight: 400; }
         
-        .tabs { display: flex; gap: 10px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; background: #e2e8f0; color: var(--secondary); transition: 0.2s; }
-        .tab-btn.active { background: var(--primary); color: white; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 14px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; background: #edf2f7; color: var(--secondary); transition: 0.2s; font-size: 0.9rem; }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 6px rgba(26, 54, 93, 0.2); }
 
-        .menu-box { background: var(--card); padding: 12px; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        select, input[type="text"] { width: 100%; padding: 10px; margin-top: 5px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 0.9rem; }
-        .file-label { display: block; font-size: 0.8rem; font-weight: bold; color: #555; margin-top: 5px; }
+        .menu-box { background: var(--card); padding: 15px; border-radius: 14px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        select, input[type="text"] { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #cbd5e0; box-sizing: border-box; font-size: 0.95rem; font-weight: 500; color: #2d3748; }
+        .file-label { display: block; font-size: 0.75rem; font-weight: 700; color: #718096; letter-spacing: 0.5px; text-transform: uppercase; }
         
-        .stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 5px; font-weight: 500; }
-        .bar { background: #e0e0e0; border-radius: 10px; height: 10px; width: 100%; margin-bottom: 20px; overflow: hidden; }
-        .fill { background: var(--success); height: 100%; width: 0%; transition: width 0.3s; }
+        .stats { display: flex; justify-content: space-between; font-size: 0.85rem; color: #4a5568; margin-bottom: 6px; font-weight: 600; }
+        .bar { background: #e2e8f0; border-radius: 10px; height: 8px; width: 100%; margin-bottom: 20px; overflow: hidden; }
+        .fill { background: var(--success); height: 100%; width: 0%; transition: width 0.4s ease-out; }
         
-        .card { background: var(--card); border-radius: 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.06); padding: 30px 20px; min-height: 260px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: pointer; position: relative; margin-bottom: 20px; text-align: center; box-sizing: border-box;}
-        .nor { font-size: 2rem; font-weight: 800; color: var(--primary); margin: 10px 0 2px 0; word-break: break-word; }
-        .pron { font-size: 0.95rem; color: #777; font-style: italic; margin-bottom: 15px; }
-        .context-tag { background: #e2e8f0; color: var(--secondary); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; display: inline-block; }
-        .audio-btn { background: #e0e6ed; border: none; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: var(--primary); margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+        .card { background: var(--card); border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 25px 20px; min-height: 320px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; cursor: pointer; border: 1px solid #e2e8f0; margin-bottom: 20px; text-align: center; box-sizing: border-box; transition: transform 0.2s; }
+        .card:hover { transform: translateY(-2px); }
+        .nor { font-size: 1.6rem; font-weight: 800; color: var(--primary); margin: 15px 0 5px 0; word-break: break-word; line-height: 1.3; }
+        .pron { font-size: 0.9rem; color: #718096; font-style: italic; margin-bottom: 15px; background: #f7fafc; padding: 2px 8px; border-radius: 4px; }
+        .context-tag { background: #ebf8ff; color: #2b6cb0; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .audio-btn { background: #e2e8f0; border: none; padding: 10px 20px; border-radius: 20px; font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+        .audio-btn:hover { background: #cbd5e0; }
         
-        .divider { width: 100%; border-top: 1px dashed #ddd; margin: 10px 0; display: none; }
+        .divider { width: 100%; border-top: 2px dashed #e2e8f0; margin: 15px 0; display: none; }
         .translation-block { display: none; width: 100%; }
-        .eng { font-size: 1.25rem; color: #333; font-weight: bold; margin-bottom: 15px; }
-        .sentence-box { background: #f8f9fa; padding: 12px; border-radius: 8px; text-align: left; border-left: 4px solid var(--primary); margin-top: 5px; }
-        .s-nor { font-size: 1rem; font-weight: 600; color: #222; margin-bottom: 4px; }
-        .s-eng { font-size: 0.9rem; color: #666; }
-        .muntlig-tip { margin-top: 10px; font-size: 0.85rem; color: var(--accent); background: #fff5f5; padding: 8px; border-radius: 6px; border: 1px solid #fed7d7; font-weight: 500; text-align: left; }
+        .eng { font-size: 1.15rem; color: #2d3748; font-weight: 700; margin-bottom: 15px; }
         
-        .hint { font-size: 0.75rem; color: #bbb; font-weight: bold; letter-spacing: 0.5px; margin-top: 10px; }
+        .sentence-box { background: #f7fafc; padding: 14px; border-radius: 10px; text-align: left; border-left: 4px solid var(--primary); margin-top: 5px; }
+        .s-title { font-size: 0.75rem; font-weight: 700; color: #a0aec0; text-transform: uppercase; margin-bottom: 5px; }
+        .s-nor { font-size: 1.05rem; font-weight: 600; color: #1a202c; margin-bottom: 6px; line-height: 1.4; }
+        .s-eng { font-size: 0.95rem; color: #4a5568; line-height: 1.4; }
+        
+        .muntlig-tip { margin-top: 15px; font-size: 0.85rem; color: #9b2c2c; background: #fff5f5; padding: 12px; border-radius: 10px; border: 1px solid #fed7d7; font-weight: 500; text-align: left; line-height: 1.4; }
+        .muntlig-tip strong { color: var(--accent); }
+        
+        .hint { font-size: 0.75rem; color: #a0aec0; font-weight: 700; letter-spacing: 1px; margin-top: 15px; }
         .actions { display: flex; gap: 12px; }
-        button.action-btn { flex: 1; padding: 16px; border: none; border-radius: 12px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
-        button.action-btn:active { transform: scale(0.97); }
-        .btn-fail { background: #ffebee; color: var(--accent); border: 2px solid var(--accent); }
-        .btn-pass { background: #e8f5e9; color: var(--success); border: 2px solid var(--success); }
-        .debug-msg { font-size: 0.75rem; color: #999; text-align: center; margin-top: 15px; }
+        button.action-btn { flex: 1; padding: 18px; border: none; border-radius: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.1s ease; }
+        button.action-btn:active { transform: scale(0.98); }
+        .btn-fail { background: #fff5f5; color: var(--accent); border: 2px solid #feb2b2; }
+        .btn-fail:hover { background: #fed7d7; }
+        .btn-pass { background: #f0fff4; color: var(--success); border: 2px solid #9ae6b4; }
+        .btn-pass:hover { background: #c6f6d5; }
+        .debug-msg { font-size: 0.75rem; color: #a0aec0; text-align: center; margin-top: 20px; font-weight: 500; }
         
         .hidden { display: none !important; }
     </style>
@@ -53,57 +62,59 @@
 <body>
 
 <div class="wrapper">
-    <h1>🇳🇴 Bokmål CEFR Progress</h1>
+    <h1>🇳🇴 3-Month Muntlig Blueprint</h1>
+    <h2>Your Daily Teacher-Guided Drill Rig</h2>
     
     <div class="tabs">
-        <button id="tabGloser" class="tab-btn active" onclick="switchMode('gloser')">📖 Gloser & Ord</button>
-        <button id="tabMuntlig" class="tab-btn" onclick="switchMode('muntlig')">🗣️ Muntlig & Reise</button>
+        <button id="tabGloser" class="tab-btn active" onclick="switchMode('gloser')">⚡ Core Vocabulary & Usage</button>
+        <button id="tabMuntlig" class="tab-btn" onclick="switchMode('muntlig')">🗣️ Conversations & Oral Exam</button>
     </div>
     
     <div class="menu-box">
-        <label class="file-label">👤 USER ID:</label>
+        <label class="file-label">👤 Learner Profile ID:</label>
         <input type="text" id="userIdInput" value="learner_1" onchange="switchUser()">
         
-        <label class="file-label" style="margin-top:10px;">🎯 CEFR-NIVÅ:</label>
+        <label class="file-label" style="margin-top:12px;">📈 Target Syllabus Phase:</label>
         <select id="levelPicker" onchange="switchLevel()">
-            <option value="A1">A1: Nybegynner (Introduksjon)</option>
-            <option value="A2">A2: Elementært (Hverdagsliv & Leilighet)</option>
-            <option value="B1">B1: Selvstendig (Samfunn & Diskusjon)</option>
-            <option value="B2">B2: Avansert (Arbeid & Bærekraft)</option>
+            <option value="A1">Month 1 (A1): Structural Foundations</option>
+            <option value="A2">Month 1 (A2): Situational Narratives</option>
+            <option value="B1">Month 2 (B1): Argumentation Markings</option>
+            <option value="B2">Month 3 (B2): Advanced Structural Debate</option>
         </select>
     </div>
 
     <div class="stats">
-        <span id="statProgress">Mestret: 0/0</span>
+        <span id="statProgress">Mastered: 0/0</span>
         <span id="statPercent">0%</span>
     </div>
     <div class="bar"><div class="fill" id="barFill"></div></div>
 
     <div class="card" onclick="flip(event)">
         <div style="width:100%;">
-            <span class="context-tag" id="boxTag">Vokabular</span>
+            <span class="context-tag" id="boxTag">Loading...</span>
             <div class="nor" id="boxNor">Laster...</div>
             <div class="pron" id="boxPron">-</div>
-            <button class="audio-btn" onclick="speakCurrentWord(event)">🔊 Lytt</button>
+            <button class="audio-btn" onclick="speakCurrentWord(event)">🔊 Play Speech</button>
         </div>
         <div class="divider" id="boxDivider"></div>
         <div class="translation-block" id="boxTranslation">
             <div class="eng" id="boxEng">-</div>
             <div class="sentence-box">
+                <div class="s-title">Usage & Production Context</div>
                 <div class="s-nor" id="boxSNor">-</div>
                 <div class="s-eng" id="boxSEng">-</div>
             </div>
             <div class="muntlig-tip hidden" id="boxMuntligTip"></div>
         </div>
-        <div class="hint" id="boxHint">TRYKK PÅ KORTET FOR Å SE SVAR</div>
+        <div class="hint" id="boxHint">TAP CARD TO REVEAL KEY & TARGET USAGE</div>
     </div>
 
     <div class="actions">
-        <button class="action-btn btn-fail" onclick="handleCard(false)">❌ Repetere</button>
-        <button class="action-btn btn-pass" onclick="handleCard(true)">✅ Kan det</button>
+        <button class="action-btn btn-fail" onclick="handleCard(false)">❌ Drill Again</button>
+        <button class="action-btn btn-pass" onclick="handleCard(true)">✅ Fluent / Mastered</button>
     </div>
     
-    <div class="debug-msg" id="dbMsg">Initialiserer...</div>
+    <div class="debug-msg" id="dbMsg">Initializing sync pipeline...</div>
 </div>
 
 <script type="module">
@@ -119,52 +130,60 @@
         appId: "YOUR_APP_ID"
     };
 
-    // Fallback safe initialization
     let db = null;
     try {
         if(firebaseConfig.apiKey !== "YOUR_API_KEY") {
             const app = initializeApp(firebaseConfig);
             db = getFirestore(app);
         }
-    } catch(e) { console.error("Firebase init failed, using local storage", e); }
+    } catch(e) { console.error("Firebase unavailable, running on isolated local storage.", e); }
 
-    // Broad structured learning database targeting Vocab, Storyline & Oral Tasks
+    // MASSIVE SYSTEMATIC RE-DESIGN BY YOUR NORWEGIAN TEACHER
     const masterData = {
         "gloser": {
             "A1": [
-                { no: "å hilse", pron: "[å heel-seh]", en: "to greet", s_no: "Det er viktig å hilse på naboen.", s_en: "It is important to greet the neighbor.", tag: "Sosialt" },
-                { no: "en familie", pron: "[ehn fah-mee-lee-eh]", en: "a family", s_no: "Min familie bor i utlandet.", s_en: "My family lives abroad.", tag: "Relasjoner" }
+                { no: "å like (liker - likte - har likt)", pron: "[lik-ehr]", en: "to like (Core Anchor Verb)", s_no: "Jeg liker å bo i Norge fordi det er trygt.", s_en: "I like living in Norway because it is safe.", tag: "Month 1 Verb" },
+                { no: "å pleie (pleier - pleide - har pleid)", pron: "[plei-ehr]", en: "to usually do / be accustomed to", s_no: "Jeg pleier å drikke kaffe om morgenen.", s_en: "I usually drink coffee in the morning.", tag: "Month 1 Verb" },
+                { no: "fordi", pron: "[fohr-dee]", en: "because (Essential Clause Connector)", s_no: "Jeg lærer norsk fordi jeg vil jobbe her.", s_en: "I am learning Norwegian because I want to work here.", tag: "Month 1 Connector" },
+                { no: "en jobb (jobben - jobber - jobbene)", pron: "[yobb]", en: "a job / employment", s_no: "Jeg søker etter en jobb innen IT.", s_en: "I am searching for a job within IT.", tag: "Month 1 Noun" },
+                { no: "å hilse (hilser - hilste - har hilst)", pron: "[hil-sehr]", en: "to greet", s_no: "Det er vanlig å hilse med et håndtrykk.", s_en: "It is customary to greet with a handshake.", tag: "Month 1 Social" }
             ],
             "A2": [
-                { no: "en leilighet", pron: "[ehn lye-lee-heht]", en: "an apartment", s_no: "Jeg leter etter en leilighet med god planløsning.", s_en: "I am looking for an apartment with a good layout.", tag: "Bolig" },
-                { no: "å trives", pron: "[å tree-vehs]", en: "to thrive / enjoy oneself", s_no: "Jeg trives veldig godt i Norge.", s_en: "I thrive very well in Norway.", tag: "Følelser" }
+                { no: "å trives (trives - trivdes - har trivdes)", pron: "[tree-vehs]", en: "to enjoy oneself / thrive in a place", s_no: "Jeg trives veldig godt i mitt nye nabolag.", s_en: "I thrive very well in my new neighborhood.", tag: "Month 1 Setup" },
+                { no: "en leilighet (leiligheten - leiligheter)", pron: "[lye-lee-heht]", en: "an apartment", s_no: "Jeg leier en leilighet med to soverom.", s_en: "I rent an apartment with two bedrooms.", tag: "Month 1 Living" },
+                { no: "selv om", pron: "[sell ohm]", en: "even though / although", s_no: "Jeg går på tur selv om det regner.", s_en: "I go for a walk even though it is raining.", tag: "Month 1 Connector" },
+                { no: "en utfordring (utfordringen - utfordringer)", pron: "[oot-fohr-dreeng]", en: "a challenge", s_no: "Å lære uttale er en stor utfordring.", s_en: "Learning pronunciation is a big challenge.", tag: "Month 1 Abstract" }
             ],
             "B1": [
-                { no: "en undersøkelse", pron: "[ehn oon-dehr-sooh-kehls-eh]", en: "a survey / investigation", s_no: "Undersøkelsen viser at mange lærer norsk på nett.", s_en: "The survey shows that many learn Norwegian online.", tag: "Samfunn" },
-                { no: "å uttrykke", pron: "[å oot-tryk-keh]", en: "to express", s_no: "Det kan være vanskelig å uttrykke følelser på et nytt språk.", s_en: "It can be difficult to express feelings in a new language.", tag: "Kommunikasjon" }
+                { no: "etter min mening", pron: "[eht-tehr meen meh-neeng]", en: "in my opinion (Argumentative Anchor)", s_no: "Etter min mening bør kollektivtransport være gratis.", s_en: "In my opinion, public transport should be free.", tag: "Month 2 Opinion" },
+                { no: "å forårsake (-et, -et)", pron: "[fohr-ahr-sah-keh]", en: "to cause / bring about", s_no: "Høyt skjermbruk kan forårsake dårlig søvn.", s_en: "High screen use can cause poor sleep.", tag: "Month 2 Discussion" },
+                { no: "en fordel (fordelen - fordeler)", pron: "[fohr-dehll]", en: "an advantage / benefit", s_no: "En stor fordel med Norge er balansen mellom jobb og fritid.", s_en: "A major advantage with Norway is the work-life balance.", tag: "Month 2 Analysis" },
+                { no: "en ulempe (ulempen - ulemper)", pron: "[oo-lehm-peh]", en: "a disadvantage / drawback", s_no: "En ulempe med saken er de høye kostnadene.", s_en: "A disadvantage of the matter is the high costs.", tag: "Month 2 Analysis" }
             ],
             "B2": [
-                { no: "bærekraftig", pron: "[baere-krahf-tee]", en: "sustainable", s_no: "Vi må finne bærekraftige løsninger for fremtiden.", s_en: "We must find sustainable solutions for the future.", tag: "Miljø" },
-                { no: "en forutsetning", pron: "[ehn fohr-oot-seht-neeng]", en: "a prerequisite / condition", s_no: "Gode språkkunnskaper er en forutsetning for denne stillingen.", s_en: "Good language skills are a prerequisite for this position.", tag: "Arbeidsliv" }
+                { no: "å forutsette (forutsetter - forutsatte - har forutsatt)", pron: "[fohr-oot-seht-teh]", en: "to presuppose / require / assume", s_no: "Det grønne skiftet forutsetter store investeringer.", s_en: "The green shift requires massive investments.", tag: "Month 3 Debate" },
+                { no: "bærekraftig (bærekraftig - bærekraftige)", pron: "[baere-krahf-tee]", en: "sustainable", s_no: "Vi må utvikle mer bærekraftige energikilder.", s_en: "We must develop more sustainable energy sources.", tag: "Month 3 Macro" },
+                { no: "i hvilken grad", pron: "[ee veel-kehn grahd]", en: "to what extent / how far", s_no: "Spørsmålet er i hvilken grad staten bør gripe inn.", s_en: "The question is to what extent the state should intervene.", tag: "Month 3 Structuring" },
+                { no: "å drøfte (drøfter - drøftet - har drøftet)", pron: "[druhf-tehr]", en: "to discuss thoroughly / analyze options", s_no: "I denne oppgaven skal jeg drøfte fordeler og ulemper.", s_en: "In this task, I shall thoroughly debate the pros and cons.", tag: "Month 3 Anchor" }
             ]
         },
         "muntlig": {
             "A1": [
-                { no: "Hva heter du og hvor bor du?", pron: "Presentasjon", en: "Introduce yourself", s_no: "Jeg heter Ashutosh. Jeg kommer fra India, men jeg har bodd i Norge i nesten seks år.", s_en: "My name is Ashutosh. I come from India, but I have lived in Norway for nearly six years.", tag: "Muntlig: Dele 1", tip: "Muntlig-tips: Hold det enkelt, men snakk klart og tydelig om deg selv." }
+                { no: "Kan du fortelle litt om deg selv?", pron: "Intro Sequence", en: "Can you tell me a bit about yourself?", s_no: "Jeg heter Ashutosh. Jeg kommer fra India, men nå bor jeg i Oslo. Jeg jobber med IT og har bodd her i noen år.", s_en: "I am Ashutosh. I come from India, but now I live in Oslo. I work with IT and have lived here for some years.", tag: "Muntlig Part 1", tip: "Teacher Tip: Memorize this exact sequence. Keep verbs strictly in the second position (V2 rule)." }
             ],
             "A2": [
-                { no: "Fortell om boligen din eller et sted du har besøkt.", pron: "Beskrivelse", en: "Describe your home or a place visited", s_no: "Jeg bor i en fin leilighet. I ferien reiste jeg til Split i Kroatia, hvor jeg så på historiske festninger.", s_en: "I live in a nice apartment. During the holidays I traveled to Split in Croatia, where I looked at historic fortresses.", tag: "Muntlig: Dele 2", tip: "Muntlig-tips: Bruk preteritum (fortid) riktig når du forteller om en reise eller opplevelse." }
+                { no: "Fortell om hvordan du bor og nabolaget ditt.", pron: "Description Task", en: "Describe your living situation and neighborhood.", s_no: "Jeg bor i en leilighet i andre etasje. Nabolaget mitt er veldig rolig og barnevennlig, og det er kort vei til butikken.", s_en: "I live in an apartment on the second floor. My neighborhood is very quiet and child-friendly, and it's a short distance to the shop.", tag: "Muntlig Part 2", tip: "Teacher Tip: Use spatial prepositions accurately ('i andre etasje', 'kort vei til'). This guarantees an A2 rating." }
             ],
             "B1": [
-                { no: "Bør foreldre bestemme over barnas skjermtid?", pron: "Argumentasjon", en: "Expressing opinions on screen time", s_no: "Etter min mening er det viktig at voksne setter grenser, men barna må også lære digital dømmekraft.", s_en: "In my opinion, it is important that adults set limits, but children must also learn digital judgment.", tag: "Muntlig: Individuell oppgave", tip: "Muntlig-tips: Bruk faste uttrykk som 'Etter min mening...', 'Jeg mener at...' for å strukturere argumentene dine." }
+                { no: "Bør barn få bruke smarttelefoner fritt?", pron: "Argumentation Drill", en: "Should children be allowed to use smartphones freely?", s_no: "Det er et viktig spørsmål. På den ene siden gir telefoner tilgang til kunnskap. På den andre siden kan det føre til mindre fysisk aktivitet. Derfor mener jeg at voksne må sette klare grenser.", s_en: "That is an important question. On one hand, phones give access to knowledge. On the other hand, it can lead to less physical activity. Therefore, I believe adults must set clear limits.", tag: "Muntlig Individual", tip: "Teacher Tip: The exact words 'På den ene siden... På den andre siden...' (On one hand... On the other hand) instantly unlock your B1 passing grade because it shows conceptual organization." }
             ],
             "B2": [
-                { no: "Hvordan kan Norge balansere oljeproduksjon og klimatiltak?", pron: "Drøfting", en: "Discussing oil economy vs climate solutions", s_no: "Dette er et komplekst spørsmål. På den ene siden sikrer oljen arbeidsplasser; på den andre siden krever det grønne skiftet en rask omstilling.", s_en: "This is a complex issue. On one hand, oil secures jobs; on the other hand, the green shift requires a rapid transition.", tag: "Muntlig: Drøfting", tip: "Muntlig-tips: Vis nyanser ved å bruke 'På den ene siden... på den andre siden...' og vis variert ordforråd." }
+                { no: "Hvordan kan vi løse konflikten mellom økonomisk vekst og miljøvern?", pron: "Macro Dilemma Debate", en: "How can we solve the conflict between economic growth and environmental protection?", s_no: "Dette reiser en fundamental problemstilling. Det er en utbredt oppfatning at økonomisk vekst går på bekostning av klimaet. Likevel vil jeg påstå at grønn teknologi gjør det mulig å kombinere disse to hensynene, forutsatt at myndighetene legger til rette for subsidier.", s_en: "This raises a fundamental dilemma. It is a widespread perception that economic growth comes at the expense of the climate. Nevertheless, I argue that green technology makes it possible to combine these two considerations, provided that authorities facilitate subsidies.", tag: "Muntlig Discussion", tip: "Teacher Tip: To clear B2, do not take raw simple stances. Use modal combinations and conditioning phrases like 'forutsatt at' (provided that) and 'går på bekostning av' (comes at the expense of)." }
             ]
         }
     };
 
-    let currentMode = "gloser"; // 'gloser' eller 'muntlig'
+    let currentMode = "gloser";
     let activeLevel = "A1";
     let sessionList = [];
     let masteredList = [];
@@ -173,7 +192,7 @@
     let userId = "learner_1";
 
     async function syncProgressWithFirebase() {
-        document.getElementById('dbMsg').innerText = "Synkroniserer fremdrift...";
+        document.getElementById('dbMsg').innerText = "Syncing tracking modules...";
         const storageKey = `mastered_${currentMode}_${activeLevel}`;
         
         if (db) {
@@ -187,13 +206,13 @@
                     await setDoc(userRef, { [storageKey]: [] }, { merge: true });
                     masteredList = [];
                 }
-                document.getElementById('dbMsg').innerText = "Sky-synkronisering aktiv.";
+                document.getElementById('dbMsg').innerText = "Cloud Sync Pipeline Activated.";
                 setupSession();
                 return;
-            } catch (e) { console.log("Firebase fallback to local."); }
+            } catch (e) { console.log("Firebase fallback triggered."); }
         }
         
-        document.getElementById('dbMsg').innerText = "Frakoblet modus (Lokal lagring).";
+        document.getElementById('dbMsg').innerText = "Offline Mode active (Local Storage tracking).";
         masteredList = JSON.parse(localStorage.getItem(`local_${storageKey}`)) || [];
         setupSession();
     }
@@ -212,15 +231,15 @@
         const doneCount = fullCount - remaining;
         const pct = fullCount > 0 ? Math.round((doneCount / fullCount) * 100) : 0;
 
-        document.getElementById("statProgress").innerText = `Mestret: ${doneCount}/${fullCount}`;
+        document.getElementById("statProgress").innerText = `Mastered: ${doneCount}/${fullCount}`;
         document.getElementById("statPercent").innerText = `${pct}%`;
         document.getElementById("barFill").style.width = `${pct}%`;
 
         if (sessionList.length === 0) {
-            document.getElementById("boxNor").innerText = "Ferdig med denne delen! 🎉";
+            document.getElementById("boxNor").innerText = "Phase Complete! 🏆";
             document.getElementById("boxPron").innerText = "-";
-            document.getElementById("boxEng").innerText = `Nivå ${activeLevel} er fullført!`;
-            document.getElementById("boxTag").innerText = "Suksess";
+            document.getElementById("boxEng").innerText = `You have structural ownership of ${activeLevel} under this module. Move to the next phase!`;
+            document.getElementById("boxTag").innerText = "Completed";
             document.getElementById("boxDivider").style.display = "block";
             document.getElementById("boxTranslation").style.display = "block";
             document.getElementById("boxHint").style.display = "none";
@@ -238,7 +257,7 @@
         document.getElementById("boxTag").innerText = item.tag || "Vokabular";
         
         if(item.tip) {
-            document.getElementById("boxMuntligTip").innerText = item.tip;
+            document.getElementById("boxMuntligTip").innerHTML = `<strong>Teacher Strategy:</strong> ${item.tip}`;
             document.getElementById("boxMuntligTip").classList.remove("hidden");
         } else {
             document.getElementById("boxMuntligTip").classList.add("hidden");
@@ -246,7 +265,7 @@
 
         document.getElementById("boxDivider").style.display = "none";
         document.getElementById("boxTranslation").style.display = "none";
-        document.getElementById("boxHint").innerText = "TRYKK PÅ KORTET FOR Å SE SVAR";
+        document.getElementById("boxHint").innerText = "TAP CARD TO REVEAL KEY & TARGET USAGE";
         document.getElementById("boxHint").style.display = "block";
     }
     
@@ -262,10 +281,14 @@
     window.speakCurrentWord = function(event) {
         event.stopPropagation();
         if (sessionList.length === 0) return;
-        // Clean prefixes for natural text-to-speech
-        const cleanText = sessionList[idx].no.replace(/^å\s+/, '');
+        
+        // Strip down complex formatting so browser reads cleanly
+        let cleanText = sessionList[idx].no.split('(')[0].trim();
+        cleanText = cleanText.replace(/^å\s+/, '');
+        
         const utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'no-NO';
+        utterance.rate = 0.85; // Slightly slower for crisp articulation listening
         window.speechSynthesis.speak(utterance);
     };
 
@@ -281,7 +304,7 @@
                 try {
                     const userRef = doc(db, "users", userId);
                     await updateDoc(userRef, { [storageKey]: arrayUnion(wordWord) });
-                } catch(e) { console.log("Lagret lokalt midlertidig."); }
+                } catch(e) { console.log("Cached locally."); }
             }
             sessionList.splice(idx, 1);
         } else {
@@ -308,12 +331,7 @@
         syncProgressWithFirebase();
     };
 
-    // Run init
     syncProgressWithFirebase();
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js').then(() => console.log("SW registrert."));
-    }
 </script>
 </body>
 </html>
