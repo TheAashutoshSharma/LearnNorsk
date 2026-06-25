@@ -86,9 +86,13 @@
 
     <div class="card" onclick="flip(event)">
         <div style="width:100%;">
-            <span class="context-tag" id="boxTag">Loading...</span>
+            <span class="context-tag" id="boxTag">Vokabular</span>
             <div class="nor" id="boxNor">Laster...</div>
-            <button class="audio-btn" onclick="speakCurrentWord(event)">🔊 Google TTS Pronounce</button>
+            
+            <!-- EXPLICIT AUDIO PLAYER ENGINE BYPASSES BROWSER BLOCKS -->
+            <div style="margin: 15px 0;">
+                <audio id="googleAudioPlayer" controls style="width: 100%; max-width: 240px; height: 32px; margin: 0 auto; display: block;"></audio>
+            </div>
         </div>
         <div class="divider" id="boxDivider"></div>
         <div class="translation-block" id="boxTranslation">
@@ -246,6 +250,7 @@
             document.getElementById("boxTranslation").style.display = "block";
             document.getElementById("boxHint").style.display = "none";
             document.getElementById("boxMuntligTip").classList.add("hidden");
+            document.getElementById("googleAudioPlayer").style.display = "none";
             return;
         }
 
@@ -263,6 +268,14 @@
         } else {
             document.getElementById("boxMuntligTip").classList.add("hidden");
         }
+
+        // UPDATE AUDIO SOURCE TO PREMIUM NATIVE GOOGLE ENGINE INSTANTLY
+        let textToSpeak = item.no.split('(')[0].trim().replace(/^å\s+/, '');
+        const encText = encodeURIComponent(textToSpeak);
+        const player = document.getElementById("googleAudioPlayer");
+        player.style.display = "block";
+        player.src = `https://translate.google.com/translate_tts?ie=UTF-8&tl=no&client=tw-ob&q=${encText}`;
+        player.load(); // Force the browser to queue up the high-quality native audio stream
 
         document.getElementById("boxDivider").style.display = "none";
         document.getElementById("boxTranslation").style.display = "none";
